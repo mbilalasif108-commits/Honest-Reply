@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff0f6"><title>Q. Kia Nasir Pyara Hai? 💗</title>
+<style>
+:root{--pink:#ff4f91;--deep:#8f2457}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#51213c;background:radial-gradient(circle at top,#ffe0ed 0,#fff7fa 48%,#f6e8ff 100%);overflow:hidden}
+.card{width:min(100%,470px);padding:26px 22px 24px;text-align:center;border:1px solid #fff;border-radius:28px;background:#ffffffd9;box-shadow:0 18px 60px #a6427530;backdrop-filter:blur(10px)}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.22em;color:#bb5687;font-weight:800}
+h1{font-size:clamp(25px,6vw,36px);line-height:1.15;margin:9px 0 18px;color:var(--deep)}
+.portrait{width:min(100%,270px);aspect-ratio:4/5;object-fit:cover;object-position:center 28%;border-radius:20px;border:4px solid white;box-shadow:0 8px 26px #87335b24}
+.question{font-size:clamp(21px,5vw,27px);font-weight:850;margin:19px 0 20px}
+.buttons{display:flex;justify-content:center;align-items:center;gap:16px;min-height:58px;position:relative}
+button{font:700 17px system-ui;min-width:112px;padding:14px 24px;border:0;border-radius:999px;cursor:pointer;touch-action:manipulation}
+#yes{color:white;background:linear-gradient(120deg,#ff4f91,#e73878);box-shadow:0 8px 20px #ff4f9140}
+#no{color:#75455e;background:#f5e8ef;border:1px solid #ead1df;transition:left .12s,top .12s}
+.note{font-size:12px;color:#a06b87;margin:18px 0 0}.hidden{display:none!important}
+#thanks{padding:36px 20px}.heart{font-size:64px;animation:pulse .8s ease-in-out infinite alternate}
+#thanks h2{font-size:clamp(32px,8vw,48px);margin:12px 0;color:var(--deep)}#thanks p{font-size:18px;color:#874866}
+#again{margin-top:16px;background:#f5e8ef;color:#75455e}.confetti{position:fixed;pointer-events:none;inset:0;overflow:hidden}
+.confetti span{position:absolute;bottom:-30px;font-size:22px;animation:rise 3.5s linear forwards}
+@keyframes rise{to{transform:translateY(-115vh) rotate(420deg);opacity:0}}@keyframes pulse{to{transform:scale(1.13)}}
+@media(max-width:380px){.card{padding:22px 15px}.portrait{width:225px}button{min-width:100px;padding:13px 19px}}
+</style></head>
+<body>
+<main class="card" id="questionCard">
+<div class="kicker">A tiny question for you</div><h1>💗 Just answer honestly 💗</h1>
+<img class="portrait" src="images/nasir.jpg" alt="Nasir's picture">
+<div class="question">Q. Kia Nasir Pyara Hai? 🥹</div>
+<div class="buttons" id="buttonArea"><button id="yes" type="button">Yes ❤️</button><button id="no" type="button">No 🙈</button></div>
+<p class="note">Choose wisely 😜</p></main>
+<main class="card hidden" id="thanks"><div class="heart">🥰💖</div><h2>Thank You!</h2><p>Mujhe pata tha! ❤️<br>You made my day.</p><button id="again" type="button">← Back</button></main>
+<div class="confetti" id="confetti"></div>
+<script>
+const no=document.getElementById('no');
+function dodge(){
+ const b=no.getBoundingClientRect();
+ const vv=window.visualViewport;
+ const vw=Math.floor(vv ? vv.width : document.documentElement.clientWidth);
+ const vh=Math.floor(vv ? vv.height : document.documentElement.clientHeight);
+ const ox=vv ? vv.offsetLeft : 0;
+ const oy=vv ? vv.offsetTop : 0;
+ const margin=10;
+ const maxX=Math.max(margin, vw-b.width-margin);
+ const maxY=Math.max(margin, vh-b.height-margin);
+ let x=margin,y=margin;
+ for(let i=0;i<24;i++){
+   x=margin+Math.random()*Math.max(0,maxX-margin);
+   y=margin+Math.random()*Math.max(0,maxY-margin);
+   if(Math.hypot(x+ox-b.left,y+oy-b.top)>100) break;
+ }
+ no.style.position='fixed';
+ no.style.left=(ox+x)+'px';
+ no.style.top=(oy+y)+'px';
+ // Keep the button inside the visible screen after rotation or browser-bar changes.
+ requestAnimationFrame(()=>{
+   const r=no.getBoundingClientRect();
+   const left=Math.max(8,Math.min(r.left, (vv?vv.offsetLeft:0)+(vv?vv.width:document.documentElement.clientWidth)-r.width-8));
+   const top=Math.max(8,Math.min(r.top, (vv?vv.offsetTop:0)+(vv?vv.height:document.documentElement.clientHeight)-r.height-8));
+   no.style.left=left+'px'; no.style.top=top+'px';
+ });
+}
+no.addEventListener('pointerenter',dodge);
+no.addEventListener('pointerdown',e=>{e.preventDefault();dodge()});
+no.addEventListener('click',e=>{e.preventDefault();dodge()});
+no.addEventListener('touchstart',e=>{e.preventDefault();dodge()},{passive:false});
+window.addEventListener('resize',()=>{
+ if(no.style.position==='fixed') dodge();
+});
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',()=>{
+   if(no.style.position==='fixed') dodge();
+ });
+}
+document.getElementById('yes').addEventListener('click',()=>{
+ document.getElementById('questionCard').classList.add('hidden');document.getElementById('thanks').classList.remove('hidden');
+ const layer=document.getElementById('confetti');
+ for(let i=0;i<24;i++){const s=document.createElement('span');s.textContent=['💖','💕','💗','✨','❤️'][Math.floor(Math.random()*5)];s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*.9+'s';layer.appendChild(s);setTimeout(()=>s.remove(),4500)}
+});
+document.getElementById('again').addEventListener('click',()=>{
+ document.getElementById('thanks').classList.add('hidden');document.getElementById('questionCard').classList.remove('hidden');no.style.position='';no.style.left='';no.style.top='';
+});
+</script></body></html>
